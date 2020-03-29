@@ -37,7 +37,9 @@ const managerQuestions = () => {
                 message: "What is the managers office number?"
             },
         ]).then(answer => {
-            console.log(answer);
+            const manager = new Manager(answer.name, answer.id, answer.email, answer.officeNumber);
+            console.log(manager);
+            addMore();
         })
 }
 const engineerQuestions = () => {
@@ -63,7 +65,9 @@ const engineerQuestions = () => {
             message: "What is the engineer's github?"
         }
     ]).then(answer => {
-        console.log(answer);
+        const engineer = new Engineer(answer.name, answer.id, answer.email, answer.github);
+        console.log(engineer);
+        addMore();
     })
 }
 const internQuestions = () => {
@@ -89,10 +93,26 @@ const internQuestions = () => {
             message: "What is the intern's school?"
         }
     ]).then(answer => {
-        console.log(answer);
+        const intern = new Intern(answer.name, answer.id, answer.email, answer.school);
+        console.log(intern);
+        addMore();
     })
 }
-
+const addMore = () =>{
+    inquirer
+    .prompt({
+        type: "confirm",
+        name: "addMore",
+        message: "Would you like to add another Employee?"
+    }).then(answer => {
+        if(answer.addMore){
+            newEmployee();
+        }else{
+            return
+        };
+    })
+}
+const newEmployee = () =>{
 inquirer
     .prompt({
         type: "list",
@@ -115,6 +135,9 @@ inquirer
             console.log("must choose an employee");
         }
     });
+}
+
+newEmployee();
 
 // After the user has input all employees desired, call the `render` function (required
 // above) and pass in an array containing all employee objects; the `render` function will
