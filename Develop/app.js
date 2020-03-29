@@ -10,7 +10,7 @@ const outputPath = path.join(OUTPUT_DIR, "team.html");
 
 const render = require("./lib/htmlRenderer");
 
-
+let allEmployees = [];
 // Write code to use inquirer to gather information about the development team members,
 // and to create objects for each team member (using the correct classes as blueprints!)
 const managerQuestions = () => {
@@ -38,7 +38,7 @@ const managerQuestions = () => {
             },
         ]).then(answer => {
             const manager = new Manager(answer.name, answer.id, answer.email, answer.officeNumber);
-            console.log(manager);
+            allEmployees.push(manager);
             addMore();
         })
 }
@@ -66,7 +66,7 @@ const engineerQuestions = () => {
         }
     ]).then(answer => {
         const engineer = new Engineer(answer.name, answer.id, answer.email, answer.github);
-        console.log(engineer);
+        allEmployees.push(engineer);
         addMore();
     })
 }
@@ -94,47 +94,51 @@ const internQuestions = () => {
         }
     ]).then(answer => {
         const intern = new Intern(answer.name, answer.id, answer.email, answer.school);
-        console.log(intern);
+        allEmployees.push(intern);
         addMore();
     })
 }
-const addMore = () =>{
+const addMore = () => {
     inquirer
-    .prompt({
-        type: "confirm",
-        name: "addMore",
-        message: "Would you like to add another Employee?"
-    }).then(answer => {
-        if(answer.addMore){
-            newEmployee();
-        }else{
-            return
-        };
-    })
+        .prompt({
+            type: "confirm",
+            name: "addMore",
+            message: "Would you like to add another Employee?"
+        }).then(answer => {
+            if (answer.addMore) {
+                newEmployee();
+            } else {
+                let html = render(allEmployees);
+                fs.writeFile(outputPath, html, function (err) {
+                    if (err) throw err;
+                    console.log('Saved!');
+                  });
+            };
+        })
 }
-const newEmployee = () =>{
-inquirer
-    .prompt({
-        type: "list",
-        name: "employeeType",
-        message: "What type of employee would you like to add?",
-        choices: ["Manager", "Engineer", "Intern"]
-    })
-    .then(answer => {
-        switch (answer.employeeType) {
-            case 'Manager':
-                managerQuestions();
-                break;
-            case "Engineer":
-                engineerQuestions();
-                break;
-            case "Intern":
-                internQuestions();
-                break;
-            default:
-            console.log("must choose an employee");
-        }
-    });
+const newEmployee = () => {
+    inquirer
+        .prompt({
+            type: "list",
+            name: "employeeType",
+            message: "What type of employee would you like to add?",
+            choices: ["Manager", "Engineer", "Intern"]
+        })
+        .then(answer => {
+            switch (answer.employeeType) {
+                case 'Manager':
+                    managerQuestions();
+                    break;
+                case "Engineer":
+                    engineerQuestions();
+                    break;
+                case "Intern":
+                    internQuestions();
+                    break;
+                default:
+                    console.log("must choose an employee");
+            }
+        });
 }
 
 newEmployee();
